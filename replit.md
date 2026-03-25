@@ -50,6 +50,17 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ## Packages
 
+### `artifacts/openswmm-engine` (`@workspace/openswmm-engine`)
+
+Frontend-only React + Vite documentation site for the OpenSWMM Engine technical deep-dive. Renders markdown content with sidebar navigation, syntax highlighting (highlight.js), progress bar, and responsive design.
+
+- Entry: `src/App.tsx` — renders the Documentation page
+- Content: `src/content/how-openswmm-works.ts` — full markdown content of the technical documentation
+- Page: `src/pages/documentation.tsx` — main page component with sidebar TOC, scroll tracking, code highlighting
+- Styling: `src/index.css` — custom CSS (Source Serif 4, DM Sans, JetBrains Mono fonts)
+- Dependencies: `marked` (markdown rendering), `highlight.js` (code syntax highlighting)
+- No backend required — purely client-side rendering
+
 ### `artifacts/api-server` (`@workspace/api-server`)
 
 Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
