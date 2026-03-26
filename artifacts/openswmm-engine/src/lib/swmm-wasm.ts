@@ -11,6 +11,7 @@ export interface SwmmModule {
 }
 
 let modulePromise: Promise<SwmmModule> | null = null;
+let cachedModule: SwmmModule | null = null;
 
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -27,7 +28,9 @@ function loadScript(src: string): Promise<void> {
 }
 
 export async function loadSwmm(): Promise<SwmmModule> {
+  if (cachedModule) return cachedModule;
   if (modulePromise) return modulePromise;
+
   const p = (async () => {
     const base = import.meta.env.BASE_URL || "/";
     const jsUrl = `${base}wasm/swmm5.js`;
@@ -41,10 +44,14 @@ export async function loadSwmm(): Promise<SwmmModule> {
     const instance: SwmmModule = await factory({
       locateFile: (path: string) => `${base}wasm/${path}`,
     });
+    cachedModule = instance;
     return instance;
   })();
+
   modulePromise = p;
-  p.catch(() => { modulePromise = null; });
+  p.catch(() => {
+    modulePromise = null;
+  });
   return p;
 }
 
@@ -55,7 +62,27 @@ export interface SwmmResult {
 }
 
 export async function runSwmmSimulation(inpContent: string): Promise<SwmmResult> {
-  const swmm = await loadSwmm();
+  let swmm: SwmmModule;
+  try {
+    swmm = await loadSwmm();
+  } catch (err: any) {
+    const msg = err?.message || String(err);
+    if (msg.includes("buffer") || msg.includes("memory") || msg.includes("allocation")) {
+      return {
+        exitCode: -1,
+        reportText: "",
+        errorMessage:
+          "Not enough memory to initialize the SWMM engine. " +
+          "Try opening this page in a full browser tab (not an embedded iframe) " +
+          "or close other tabs to free memory, then reload and try again.",
+      };
+    }
+    return {
+      exitCode: -1,
+      reportText: "",
+      errorMessage: `Failed to load SWMM engine: ${msg}`,
+    };
+  }
 
   swmm.FS.writeFile("/input.inp", inpContent);
 

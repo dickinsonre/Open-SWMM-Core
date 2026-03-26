@@ -952,6 +952,27 @@ html.dark .feature-card:hover {
   background: var(--toc-hover);
 }
 
+.sim-sample-select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  min-width: 200px;
+  transition: all 0.15s;
+}
+.sim-sample-select:hover {
+  background: var(--toc-hover);
+}
+.sim-sample-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .sim-btn-primary {
   background: var(--accent);
   color: #fff;

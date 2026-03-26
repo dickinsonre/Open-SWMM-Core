@@ -18,115 +18,16 @@ const COLORS = [
   "#0891b2", "#db2777", "#65a30d", "#ea580c", "#4f46e5",
 ];
 
-const SAMPLE_INP = `[TITLE]
-;;Example SWMM Model - Simple Test
+const BASE = import.meta.env.BASE_URL || "/";
 
-[OPTIONS]
-FLOW_UNITS           CFS
-INFILTRATION         HORTON
-FLOW_ROUTING         DYNWAVE
-LINK_OFFSETS          DEPTH
-FORCE_MAIN_EQUATION  H-W
-IGNORE_RAINFALL      NO
-IGNORE_SNOWMELT      YES
-IGNORE_GROUNDWATER   YES
-IGNORE_RDII          YES
-IGNORE_ROUTING       NO
-IGNORE_QUALITY       YES
-ALLOW_PONDING        NO
-SKIP_STEADY_STATE    NO
-SYS_FLOW_TOL        5
-LAT_FLOW_TOL        5
-START_DATE           01/01/2024
-START_TIME           00:00:00
-REPORT_START_DATE    01/01/2024
-REPORT_START_TIME    00:00:00
-END_DATE             01/01/2024
-END_TIME             06:00:00
-SWEEP_START          01/01
-SWEEP_END            12/31
-DRY_DAYS             0
-REPORT_STEP          00:05:00
-WET_STEP             00:05:00
-DRY_STEP             01:00:00
-ROUTING_STEP         00:00:30
-RULE_STEP            00:00:00
-INERTIAL_DAMPING     PARTIAL
-NORMAL_FLOW_LIMITED  BOTH
-MIN_SURFAREA         12.566
-MAX_TRIALS           8
-HEAD_TOLERANCE       0.005
-THREADS              1
-TEMPDIR              .
-
-[EVAPORATION]
-CONSTANT     0.0
-
-[RAINGAGES]
-;;Name           Format    Interval SCF      Source
-;;-------------- --------- ------ ------ ----------
-RG1              INTENSITY 0:05     1.0      TIMESERIES TS1
-
-[SUBCATCHMENTS]
-;;Name           Rain Gage        Outlet           Area     %Imperv  Width    %Slope   CurbLen  SnowPack
-;;-------------- ---------------- ---------------- -------- -------- -------- -------- -------- --------
-S1               RG1              J1               5        50       500      0.5      0
-
-[SUBAREAS]
-;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     PctZero    RouteTo    PctRouted
-;;-------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
-S1               0.01       0.1        0.05       0.05       25         OUTLET
-
-[INFILTRATION]
-;;Subcatchment   MaxRate    MinRate    Decay      DryTime    MaxInfil
-;;-------------- ---------- ---------- ---------- ---------- ----------
-S1               3.0        0.5        4          7          0
-
-[JUNCTIONS]
-;;Name           Elevation  MaxDepth   InitDepth  SurDepth   Aponded
-;;-------------- ---------- ---------- ---------- ---------- ----------
-J1               100        4          0          0          0
-J2               97         4          0          0          0
-
-[OUTFALLS]
-;;Name           Elevation  Type       Stage Data       Gated    Route To
-;;-------------- ---------- ---------- ---------------- -------- --------
-Out1             94         FREE                        NO
-
-[CONDUITS]
-;;Name           From Node        To Node          Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow
-;;-------------- ---------------- ---------------- ---------- ---------- ---------- ---------- ---------- ----------
-C1               J1               J2               400        0.01       0          0          0          0
-C2               J2               Out1             400        0.01       0          0          0          0
-
-[XSECTIONS]
-;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels    Culvert
-;;-------------- ------------ ---------------- ---------- ---------- ---------- ---------- ----------
-C1               CIRCULAR     1.5              0          0          0          1
-C2               CIRCULAR     1.5              0          0          0          1
-
-[TIMESERIES]
-;;Name           Date       Time       Value
-;;-------------- ---------- ---------- ----------
-TS1                         0:00       0.0
-TS1                         0:15       0.5
-TS1                         0:30       1.0
-TS1                         0:45       2.0
-TS1                         1:00       3.0
-TS1                         1:15       4.0
-TS1                         1:30       3.5
-TS1                         1:45       2.5
-TS1                         2:00       1.5
-TS1                         2:15       0.8
-TS1                         2:30       0.3
-TS1                         2:45       0.1
-TS1                         3:00       0.0
-
-[REPORT]
-SUBCATCHMENTS ALL
-NODES ALL
-LINKS ALL
-`;
+const SAMPLE_MODELS = [
+  { id: "greenville", label: "Greenville — All SWMM5 Features (SI)", file: "greenville.inp", desc: "Comprehensive model with all SWMM5 feature types, SI units" },
+  { id: "user1", label: "User1 — Urban Drainage (CMS)", file: "user1.inp", desc: "58 subcatchments, dynamic wave routing, metric units" },
+  { id: "user2", label: "User2 — Storage Network (CFS)", file: "user2.inp", desc: "17 subcatchments, 21 storage units, tabular curves" },
+  { id: "user3", label: "User3 — Dual Pipe System (CMS)", file: "user3.inp", desc: "Large dual-pipe network, 50+ subcatchments" },
+  { id: "user4", label: "User4 — Large Municipal (CFS)", file: "user4.inp", desc: "98+ subcatchments, extensive conduit network" },
+  { id: "user5", label: "User5 — Stormwater Collection (CFS)", file: "user5.inp", desc: "90+ subcatchments, variable time-step routing" },
+];
 
 type TabId = "raw" | "tables" | "graphs";
 
@@ -159,12 +60,28 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
     reader.readAsText(file);
   }, []);
 
-  const loadSample = useCallback(() => {
-    setInpContent(SAMPLE_INP);
-    setFileName("sample-model.inp");
-    setResult(null);
-    setSections([]);
-    setTimeSeries([]);
+  const loadSample = useCallback(async (model: typeof SAMPLE_MODELS[number]) => {
+    setLoading(true);
+    setProgress(`Loading ${model.label}...`);
+    try {
+      const resp = await fetch(`${BASE}samples/${model.file}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const text = await resp.text();
+      setInpContent(text);
+      setFileName(model.file);
+      setResult(null);
+      setSections([]);
+      setTimeSeries([]);
+    } catch (err: any) {
+      setResult({
+        exitCode: -1,
+        reportText: "",
+        errorMessage: `Failed to load sample model: ${err.message}`,
+      });
+    } finally {
+      setLoading(false);
+      setProgress("");
+    }
   }, []);
 
   const runSimulation = useCallback(async () => {
@@ -242,9 +159,20 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
             >
               Upload .inp File
             </button>
-            <button className="sim-btn sim-btn-outline" onClick={loadSample}>
-              Load Sample Model
-            </button>
+            <select
+              className="sim-sample-select"
+              value=""
+              onChange={(e) => {
+                const model = SAMPLE_MODELS.find((m) => m.id === e.target.value);
+                if (model) loadSample(model);
+              }}
+              disabled={loading}
+            >
+              <option value="" disabled>Load Sample Model...</option>
+              {SAMPLE_MODELS.map((m) => (
+                <option key={m.id} value={m.id}>{m.label}</option>
+              ))}
+            </select>
             <input
               ref={fileInputRef}
               type="file"
