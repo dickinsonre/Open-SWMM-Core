@@ -7,6 +7,7 @@ import bash from "highlight.js/lib/languages/bash";
 import cmake from "highlight.js/lib/languages/cmake";
 import "highlight.js/styles/github-dark.min.css";
 import { markdownContent } from "../content/how-openswmm-works";
+import { useDarkMode } from "../hooks/use-dark-mode";
 
 hljs.registerLanguage("c", c);
 hljs.registerLanguage("python", python);
@@ -30,25 +31,13 @@ function buildToc(html: string): TocItem[] {
   return items;
 }
 
-export default function Documentation() {
+export default function Documentation({ onNavigateFeatures }: { onNavigateFeatures: () => void }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showBackTop, setShowBackTop] = useState(false);
-  const [dark, setDark] = useState(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("openswmm-dark");
-      if (stored !== null) return stored === "true";
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-    localStorage.setItem("openswmm-dark", String(dark));
-  }, [dark]);
+  const [dark, setDark] = useDarkMode();
 
   const renderedHtml = useMemo(() => {
     const renderer = new marked.Renderer();
@@ -132,6 +121,9 @@ export default function Documentation() {
 
       <nav className={`doc-sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
+          <button className="sidebar-back" onClick={onNavigateFeatures}>
+            {"\u2190"} Back to Features
+          </button>
           <h2>How OpenSWMM Works</h2>
           <div className="sidebar-sub">Technical Deep-Dive into the HydroCouple Engine</div>
           <span className="sidebar-badge">v6.0.0-alpha.1</span>
