@@ -45,6 +45,8 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
   const [activeTab, setActiveTab] = useState<TabId>("map");
   const [selectedSeries, setSelectedSeries] = useState<number[]>([]);
   const [progress, setProgress] = useState("");
+  const [progressPct, setProgressPct] = useState(0);
+  const [runStats, setRunStats] = useState<{ steps: number; elapsedMs: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,18 +94,24 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
     if (!inpContent.trim()) return;
     setRunning(true);
     setLoading(true);
+    setProgressPct(0);
+    setRunStats(null);
     setProgress("Loading SWMM engine...");
     setResult(null);
     setSections([]);
     setTimeSeries([]);
 
     try {
-      setProgress("Running simulation...");
-      const res = await runSwmmSimulation(inpContent);
+      const res = await runSwmmSimulation(inpContent, (phase, pct) => {
+        setProgress(phase);
+        setProgressPct(pct);
+      });
       setResult(res);
+      if (res.stats) setRunStats(res.stats);
 
       if (res.reportText) {
         setProgress("Parsing results...");
+        setProgressPct(98);
         const parsedSections = parseRptSections(res.reportText);
         setSections(parsedSections);
         const ts = extractTimeSeries(res.reportText);
@@ -124,6 +132,7 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
       setRunning(false);
       setLoading(false);
       setProgress("");
+      setProgressPct(0);
     }
   }, [inpContent]);
 
@@ -201,10 +210,28 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
             onClick={runSimulation}
             disabled={running || !inpContent.trim()}
           >
-            {running ? progress || "Running..." : "Run Simulation"}
+            {running ? "Running..." : "Run Simulation"}
           </button>
 
-          {loading && (
+          {running && (
+            <div className="sim-progress-container">
+              <div className="sim-progress-bar">
+                <div
+                  className="sim-progress-fill"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+              <div className="sim-progress-label">{progress}</div>
+            </div>
+          )}
+
+          {!running && runStats && result && result.exitCode === 0 && (
+            <div className="sim-run-stats">
+              Completed {runStats.steps.toLocaleString()} steps in {(runStats.elapsedMs / 1000).toFixed(1)}s
+            </div>
+          )}
+
+          {!running && loading && (
             <div className="sim-loading">
               <div className="sim-spinner" />
               <span>{progress}</span>

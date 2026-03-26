@@ -1017,6 +1017,43 @@ html.dark .feature-card:hover {
   align-self: flex-start;
 }
 
+.sim-progress-container {
+  margin-top: 12px;
+}
+
+.sim-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sim-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  min-width: 2%;
+}
+
+.sim-progress-label {
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sim-run-stats {
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+}
+
 .sim-loading {
   display: flex;
   align-items: center;
