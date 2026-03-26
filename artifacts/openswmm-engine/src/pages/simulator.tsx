@@ -1,7 +1,9 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, lazy, Suspense } from "react";
 import { useDarkMode } from "../hooks/use-dark-mode";
 import { runSwmmSimulation, type SwmmResult } from "../lib/swmm-wasm";
 import { parseRptSections, extractTimeSeries, type RptSection, type RptTimeSeries } from "../lib/rpt-parser";
+
+const NetworkMap = lazy(() => import("../components/network-map"));
 import {
   LineChart,
   Line,
@@ -29,7 +31,7 @@ const SAMPLE_MODELS = [
   { id: "user5", label: "User5 — Stormwater Collection (CFS)", file: "user5.inp", desc: "90+ subcatchments, variable time-step routing" },
 ];
 
-type TabId = "raw" | "tables" | "graphs";
+type TabId = "map" | "raw" | "tables" | "graphs";
 
 export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: () => void }) {
   const [dark, setDark] = useDarkMode();
@@ -40,7 +42,7 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
   const [result, setResult] = useState<SwmmResult | null>(null);
   const [sections, setSections] = useState<RptSection[]>([]);
   const [timeSeries, setTimeSeries] = useState<RptTimeSeries[]>([]);
-  const [activeTab, setActiveTab] = useState<TabId>("raw");
+  const [activeTab, setActiveTab] = useState<TabId>("map");
   const [selectedSeries, setSelectedSeries] = useState<number[]>([]);
   const [progress, setProgress] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -56,6 +58,7 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
       setResult(null);
       setSections([]);
       setTimeSeries([]);
+      setActiveTab("map");
     };
     reader.readAsText(file);
   }, []);
@@ -72,6 +75,7 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
       setResult(null);
       setSections([]);
       setTimeSeries([]);
+      setActiveTab("map");
     } catch (err: any) {
       setResult({
         exitCode: -1,
@@ -210,7 +214,7 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
 
         <div className="sim-output-panel">
           <h2 className="sim-panel-title">
-            Simulation Results
+            {inpContent.trim() ? "Model & Results" : "Simulation Results"}
             {result && (
               <span className={`sim-status ${result.exitCode === 0 ? "sim-status-ok" : "sim-status-err"}`}>
                 {result.exitCode === 0 ? "Success" : `Error (code ${result.exitCode})`}
@@ -218,10 +222,16 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
             )}
           </h2>
 
-          {result && (
+          {inpContent.trim() ? (
             <>
               <div className="sim-tabs">
-                {(["raw", "tables", "graphs"] as TabId[]).map((tab) => (
+                <button
+                  className={`sim-tab ${activeTab === "map" ? "active" : ""}`}
+                  onClick={() => setActiveTab("map")}
+                >
+                  Network Map
+                </button>
+                {result && (["raw", "tables", "graphs"] as TabId[]).map((tab) => (
                   <button
                     key={tab}
                     className={`sim-tab ${activeTab === tab ? "active" : ""}`}
@@ -233,11 +243,17 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
               </div>
 
               <div className="sim-tab-content">
-                {activeTab === "raw" && (
+                {activeTab === "map" && (
+                  <Suspense fallback={<div className="sim-empty">Loading map...</div>}>
+                    <NetworkMap inpContent={inpContent} dark={dark} />
+                  </Suspense>
+                )}
+
+                {activeTab === "raw" && result && (
                   <pre className="sim-raw-output">{result.reportText || result.errorMessage || "No output"}</pre>
                 )}
 
-                {activeTab === "tables" && (
+                {activeTab === "tables" && result && (
                   <div className="sim-tables">
                     {sections.length === 0 ? (
                       <p className="sim-empty">No tabular data found in the report.</p>
@@ -271,7 +287,7 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
                   </div>
                 )}
 
-                {activeTab === "graphs" && (
+                {activeTab === "graphs" && result && (
                   <div className="sim-graphs">
                     {timeSeries.length === 0 ? (
                       <p className="sim-empty">No time series data found for graphing.</p>
@@ -348,9 +364,7 @@ export default function Simulator({ onNavigateFeatures }: { onNavigateFeatures: 
                 )}
               </div>
             </>
-          )}
-
-          {!result && !running && (
+          ) : (
             <div className="sim-placeholder">
               <div className="sim-placeholder-icon">{"\uD83D\uDCA7"}</div>
               <p>Upload or paste a SWMM .inp file and click <strong>Run Simulation</strong> to see results here.</p>
