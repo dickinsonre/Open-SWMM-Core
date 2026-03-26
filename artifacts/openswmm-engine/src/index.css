@@ -17,6 +17,28 @@
   --toc-active: #2563eb;
   --toc-hover: #e8e8e5;
   --sidebar-w: 280px;
+  --inline-code-bg: #f0f0ec;
+  --inline-code-color: #c7254e;
+}
+
+html.dark {
+  --bg: #161618;
+  --bg-sidebar: #1c1c1f;
+  --bg-code: #0d0d10;
+  --bg-table: #1e1e22;
+  --bg-callout: #1a1a2e;
+  --text: #e4e4e7;
+  --text-2: #a1a1aa;
+  --text-3: #71717a;
+  --text-code: #c9d1d9;
+  --accent: #60a5fa;
+  --accent-2: #93bbfd;
+  --border: #2e2e33;
+  --border-light: #27272a;
+  --toc-active: #60a5fa;
+  --toc-hover: #27272a;
+  --inline-code-bg: #27272a;
+  --inline-code-color: #f0abfc;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -108,6 +130,31 @@ body {
   background: #dbeafe;
   color: var(--accent);
   border-radius: 4px;
+}
+
+html.dark .sidebar-badge {
+  background: #1e293b;
+}
+
+.dark-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  background: var(--bg);
+  cursor: pointer;
+  font-size: 14px;
+  vertical-align: middle;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.dark-toggle:hover {
+  background: var(--toc-hover);
+  border-color: var(--border);
 }
 
 .toc-list {
@@ -236,10 +283,10 @@ body {
 .doc-content code {
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  background: #f0f0ec;
+  background: var(--inline-code-bg);
   padding: 2px 6px;
   border-radius: 3px;
-  color: #c7254e;
+  color: var(--inline-code-color);
 }
 
 .doc-content pre {
@@ -294,7 +341,11 @@ body {
 }
 
 .doc-content tbody tr:hover {
-  background: rgba(37, 99, 235, 0.02);
+  background: rgba(37, 99, 235, 0.04);
+}
+
+html.dark .doc-content tbody tr:hover {
+  background: rgba(96, 165, 250, 0.06);
 }
 
 .doc-content tbody td code {

@@ -36,6 +36,19 @@ export default function Documentation() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showBackTop, setShowBackTop] = useState(false);
+  const [dark, setDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("openswmm-dark");
+      if (stored !== null) return stored === "true";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("openswmm-dark", String(dark));
+  }, [dark]);
 
   const renderedHtml = useMemo(() => {
     const renderer = new marked.Renderer();
@@ -122,6 +135,14 @@ export default function Documentation() {
           <h2>How OpenSWMM Works</h2>
           <div className="sidebar-sub">Technical Deep-Dive into the HydroCouple Engine</div>
           <span className="sidebar-badge">v6.0.0-alpha.1</span>
+          <button
+            className="dark-toggle"
+            onClick={() => setDark(!dark)}
+            aria-label="Toggle dark mode"
+            title={dark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {dark ? "\u2600\uFE0F" : "\uD83C\uDF19"}
+          </button>
         </div>
         <ul className="toc-list">
           {toc.map((item) => (
