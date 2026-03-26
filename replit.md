@@ -52,16 +52,21 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ### `artifacts/openswmm-engine` (`@workspace/openswmm-engine`)
 
-Frontend-only React + Vite documentation site for the OpenSWMM Engine technical deep-dive. Two-page SPA: a features landing page and a full technical documentation page.
+Frontend-only React + Vite app: features landing, documentation, and in-browser SWMM simulator.
 
-- Entry: `src/App.tsx` — state-based page switching between Features and Documentation
-- Features page: `src/pages/features.tsx` — landing page showcasing v6.0.0 architecture, C API table, additional features, testing stats, engine lifecycle diagram, and quick start code
+- Entry: `src/App.tsx` — state-based page switching between Features, Documentation, and Simulator
+- Features page: `src/pages/features.tsx` — landing page showcasing v6.0.0 features
 - Documentation page: `src/pages/documentation.tsx` — full docs with sidebar TOC, scroll tracking, code highlighting
-- Dark mode: `src/hooks/use-dark-mode.ts` — shared hook with localStorage persistence and system preference detection
+- Simulator page: `src/pages/simulator.tsx` — upload/paste .inp files, run EPA SWMM via WASM, view results as raw text, HTML tables, or recharts graphs
+- WASM loader: `src/lib/swmm-wasm.ts` — loads compiled SWMM WASM from `public/wasm/`, manages virtual filesystem
+- RPT parser: `src/lib/rpt-parser.ts` — parses SWMM .rpt output into structured tables and time series for charting
+- Dark mode: `src/hooks/use-dark-mode.ts` — shared hook with localStorage persistence
 - Content: `src/content/how-openswmm-works.ts` — full markdown content (Sections 1–11)
-- Styling: `src/index.css` — custom CSS with dark mode variables (Source Serif 4, DM Sans, JetBrains Mono fonts)
-- Dependencies: `marked` (markdown rendering), `highlight.js` (code syntax highlighting)
-- No backend required — purely client-side rendering
+- Styling: `src/index.css` — custom CSS with dark mode variables
+- WASM build: `scripts/build-wasm.sh` — compiles EPA SWMM 5.2 from OWA source to WASM using Emscripten
+- WASM output: `public/wasm/swmm5.js` + `public/wasm/swmm5.wasm` — precompiled SWMM engine
+- Dependencies: `marked`, `highlight.js`, `recharts`
+- No backend required — purely client-side rendering including simulation
 
 ### `artifacts/api-server` (`@workspace/api-server`)
 

@@ -64,7 +64,7 @@ const testingFeatures = [
   { stat: "19", label: "API Headers", desc: "All fully documented with Doxygen" },
 ];
 
-export default function Features({ onNavigateDocs }: { onNavigateDocs: () => void }) {
+export default function Features({ onNavigateDocs, onNavigateSimulator }: { onNavigateDocs: () => void; onNavigateSimulator: () => void }) {
   const [dark, setDark] = useDarkMode();
 
   return (
@@ -82,6 +82,9 @@ export default function Features({ onNavigateDocs }: { onNavigateDocs: () => voi
               aria-label="Toggle dark mode"
             >
               {dark ? "\u2600\uFE0F" : "\uD83C\uDF19"}
+            </button>
+            <button className="features-docs-btn" onClick={onNavigateSimulator}>
+              Try Simulator
             </button>
             <button className="features-docs-btn" onClick={onNavigateDocs}>
               Read the Docs
@@ -107,7 +110,10 @@ export default function Features({ onNavigateDocs }: { onNavigateDocs: () => voi
             rebuilt with a modern C++20 architecture, reentrant design, and a comprehensive 322-function C API.
           </p>
           <div className="features-hero-actions">
-            <button className="features-cta-primary" onClick={onNavigateDocs}>
+            <button className="features-cta-primary" onClick={onNavigateSimulator}>
+              Try the Simulator
+            </button>
+            <button className="features-cta-secondary" onClick={onNavigateDocs}>
               Technical Deep-Dive
             </button>
             <a

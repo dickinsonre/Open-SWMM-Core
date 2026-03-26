@@ -887,3 +887,359 @@ html.dark .feature-card:hover {
   .features-stats { grid-template-columns: 1fr; }
   .features-topbar-inner { padding: 10px 16px; }
 }
+
+.sim-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.sim-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 0;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: calc(100vh - 52px);
+}
+
+.sim-input-panel,
+.sim-output-panel {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sim-input-panel {
+  border-right: 1px solid var(--border-light);
+  background: var(--bg-sidebar);
+}
+
+.sim-panel-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sim-file-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.sim-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+}
+
+.sim-btn-outline {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.sim-btn-outline:hover {
+  background: var(--toc-hover);
+}
+
+.sim-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  padding: 10px 24px;
+}
+.sim-btn-primary:hover {
+  background: var(--accent-2);
+}
+.sim-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sim-filename {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.sim-textarea {
+  flex: 1;
+  min-height: 300px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  resize: none;
+  margin-bottom: 12px;
+}
+.sim-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sim-run-btn {
+  align-self: flex-start;
+}
+
+.sim-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.sim-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sim-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.sim-status-ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+.sim-status-err {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+html.dark .sim-status-ok {
+  background: #14532d;
+  color: #86efac;
+}
+html.dark .sim-status-err {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+.sim-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 20px;
+}
+
+.sim-tab {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sim-tab:hover {
+  color: var(--text);
+}
+.sim-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.sim-tab-content {
+  flex: 1;
+  overflow: auto;
+}
+
+.sim-raw-output {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: var(--bg-code);
+  color: var(--text-code);
+  padding: 20px;
+  border-radius: 8px;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.sim-tables {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.sim-table-section h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.sim-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+}
+
+.sim-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.sim-table th {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-3);
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-sidebar);
+  white-space: nowrap;
+}
+
+.sim-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.sim-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sim-table tbody tr:hover {
+  background: var(--toc-hover);
+}
+
+.sim-empty {
+  text-align: center;
+  color: var(--text-3);
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+.sim-graphs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sim-series-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim-series-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.sim-series-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sim-chip {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sim-chip:hover {
+  border-color: var(--accent);
+}
+.sim-chip.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.sim-chart-container {
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px 10px;
+}
+
+.sim-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 40px;
+  color: var(--text-3);
+}
+
+.sim-placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.sim-placeholder p {
+  font-size: 15px;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.sim-placeholder-sub {
+  font-size: 13px !important;
+  margin-top: 8px;
+  color: var(--text-3);
+}
+
+@media (max-width: 960px) {
+  .sim-layout {
+    grid-template-columns: 1fr;
+  }
+  .sim-input-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .sim-textarea {
+    min-height: 200px;
+  }
+}
