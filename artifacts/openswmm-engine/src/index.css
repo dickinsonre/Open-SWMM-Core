@@ -589,6 +589,36 @@ html.dark .doc-content tbody tr:hover {
 .features-section-alt {
   background: var(--bg-sidebar);
 }
+
+.features-section-about {
+  background: var(--bg);
+}
+
+.features-about-content {
+  max-width: 820px;
+}
+
+.features-about-prose p {
+  font-family: 'Source Serif 4', serif;
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--text-2);
+  margin-bottom: 1.4em;
+  text-align: left;
+}
+
+.features-about-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.features-about-prose code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  background: var(--inline-code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent);
+}
 .features-section-inner {
   max-width: 1100px;
   margin: 0 auto;
@@ -1024,7 +1054,7 @@ html.dark .feature-card:hover {
 .sim-progress-bar {
   width: 100%;
   height: 8px;
-  background: var(--bg-3);
+  background: var(--bg-sidebar);
   border-radius: 4px;
   overflow: hidden;
 }

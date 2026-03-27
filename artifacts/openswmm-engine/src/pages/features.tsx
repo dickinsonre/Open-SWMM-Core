@@ -128,6 +128,38 @@ export default function Features({ onNavigateDocs, onNavigateSimulator }: { onNa
         </div>
       </section>
 
+      <section className="features-section features-section-about">
+        <div className="features-section-inner features-about-content">
+          <h2 className="features-section-title">Why SWMM 6?</h2>
+          <div className="features-about-prose">
+            <p>
+              EPA SWMM has been the gold standard in urban stormwater and drainage modeling for over three decades.
+              Version 5.2 remains an indispensable tool used by thousands of engineers worldwide — but its single-threaded,
+              globally-stated C codebase was designed in an era before multi-core CPUs, WebAssembly, and cloud computing.
+              SWMM 6 is not a patch or a fork. It is a clean-sheet reimplementation of the SWMM solver in modern C++20,
+              preserving the validated hydraulic and hydrological algorithms while discarding the architectural constraints
+              that have limited extensibility, performance, and integration for years.
+            </p>
+            <p>
+              At its core, SWMM 6 replaces every global variable with an opaque engine handle, making it fully reentrant.
+              This single change unlocks capabilities that were previously impossible: running dozens of independent simulations
+              in a single process for Monte Carlo analysis, embedding the solver inside optimization frameworks, or compiling
+              it to WebAssembly and running it entirely in a browser tab — as the simulator on this very page demonstrates.
+              The data layout has been restructured from an array-of-structures pattern into a cache-friendly structure-of-arrays
+              architecture, yielding measurable speed improvements on modern hardware without touching the solver mathematics.
+            </p>
+            <p>
+              Equally important is what SWMM 6 preserves. The legacy EPA SWMM 5.2.4 solver ships alongside the new engine
+              in <code>src/legacy/</code>, unmodified and fully tested. Every regression test from the original EPA test suite
+              passes under the new build system. The comprehensive 322-function C API is designed so that bindings for Python,
+              C#, Julia, or any FFI-capable language can be generated mechanically from the headers. Engineers who depend on
+              validated SWMM results lose nothing; researchers and developers who need programmability, thread safety, and
+              embeddability gain everything.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="features-section">
         <div className="features-section-inner">
           <h2 className="features-section-title">Architecture & Performance</h2>
